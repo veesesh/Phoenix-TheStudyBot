@@ -3,6 +3,21 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 const { token } = require("./config.json");
+const mongoose = require("mongoose");
+const config = require("./config.json"); // Import config.json
+
+// connect to mongodb
+
+async function connectDB() {
+  try {
+    await mongoose.connect(config.MONGO_URI); //
+    console.log("✅ Connected to MongoDB");
+  } catch (error) {
+    console.error("❌ MongoDB Connection Error:", error);
+  }
+}
+
+connectDB();
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
