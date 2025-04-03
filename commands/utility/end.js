@@ -8,31 +8,50 @@ module.exports = {
   async execute(interaction) {
     const userId = interaction.user.id;
 
-    const session = await StudySession.findOne({
+    const now = new Date();
+
+    const query = {
       userId,
       status: "ongoing",
-    });
+    };
+    const options = {
+      startTime: 1,
+      originalStartTime: 1,
+      sort: { record_time: -1 },
+      // projection: { startTime: 1 },
+    };
 
+    const session = await StudySession.findOne(query, options);
+
+    //console.log(session);
     if (!session) {
       return await interaction.reply(
         "❌ You don’t have an active study session."
       );
     }
 
-    const endTime = new Date();
-    const duration = (endTime - session.startTime) / 1000;
+    if (session.startTime) {
+      session.pausedDuration =
+        (session.pausedDuration || 0) + (now - session.startTime) / 1000;
+    }
 
-    session.endTime = endTime;
-    session.duration = duration; // Store the total time in seconds
-    session.status = "completed";
+    // console.log((now - session.startTime) / 1000);
 
-    const something = await session.save();
-    console.log(something);
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.floor((duration % 3600) / 60);
-    const seconds = Math.floor(duration % 60);
-    const formattedTime = `${hours}h ${minutes}m ${seconds}s`;
+    let totalDuration = (now - session.originalStartTime) / 1000;
+    totalDuration -= session.pausedDuration || 0;
+    // console.log(totalDuration);
 
-    await interaction.reply(formattedTime);
+    session.endTime = now;
+    session.totalDuration = totalDuration;
+    session.status = "ended";
+    (session.record_time = new Date().getTime()), await session.save();
+
+    const hours = Math.floor(totalDuration / 3600);
+    const minutes = Math.floor((totalDuration % 3600) / 60);
+    const seconds = Math.floor(totalDuration % 60);
+
+    await interaction.reply(
+      `⏹️ Study session ended! Total time: **${hours}h ${minutes}m ${seconds}s**`
+    );
   },
 };
