@@ -5,12 +5,12 @@ mongoose.connect(MONGO_URI);
 
 const studySessionSchema = new mongoose.Schema({
   userId: String, // Discord User ID
-  startTime: Date, // When the session started
+  startTime: Date,
   originalStartTime: Date,
-  endTime: Date, // When the session ended (null if ongoing)
-  totalDuration: Number, // Total time in minutes (calculated when session ends)
+  endTime: Date, // (null if ongoing)
+  totalDuration: Number, // (calculated when session ends)
   status: String, // "ongoing", "paused", or "completed"
-  pausedDuration: Number,
+  pausedDuration: Number, // default to 0
   duration: Number,
   record_time: Number,
 });

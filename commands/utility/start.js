@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 const StudySession = require("../../models/StudySession.js");
-const { now } = require("mongoose");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -9,7 +8,7 @@ module.exports = {
   async execute(interaction) {
     const userId = interaction.user.id;
 
-    // Check if user already has an active session
+    // Check active session
     const query = {
       userId,
       status: "ongoing",
@@ -25,7 +24,7 @@ module.exports = {
       );
     }
 
-    // Create a new study session
+    // new session
     const newSession = new StudySession({
       userId,
       startTime: new Date(),
