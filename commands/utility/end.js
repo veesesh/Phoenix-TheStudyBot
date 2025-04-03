@@ -16,7 +16,10 @@ module.exports = {
     };
     const options = {
       startTime: 1,
+      endTime: 1,
       originalStartTime: 1,
+      pausedDuration: 1,
+      totalDuration: 1,
       sort: { record_time: -1 },
       // projection: { startTime: 1 },
     };
@@ -30,12 +33,13 @@ module.exports = {
       );
     }
 
-    if (session.startTime) {
+    if (session.startTime && session.status === "paused") {
       session.pausedDuration =
         (session.pausedDuration || 0) + (now - session.startTime) / 1000;
     }
 
-    // console.log((now - session.startTime) / 1000);
+    console.log((now - session.startTime) / 1000);
+    //console.log(session.pausedDuration);
 
     let totalDuration = (now - session.originalStartTime) / 1000;
     totalDuration -= session.pausedDuration || 0;
@@ -44,7 +48,17 @@ module.exports = {
     session.endTime = now;
     session.totalDuration = totalDuration;
     session.status = "ended";
-    (session.record_time = new Date().getTime()), await session.save();
+    (session.record_time = new Date().getTime()),
+      console.log({
+        s: session.startTime,
+        a: now,
+        b: (now - session.startTime) / 1000,
+        c: session.pausedDuration,
+        d: totalDuration,
+      });
+    // console.log(session.record_time);
+
+    await session.save();
 
     const hours = Math.floor(totalDuration / 3600);
     const minutes = Math.floor((totalDuration % 3600) / 60);
