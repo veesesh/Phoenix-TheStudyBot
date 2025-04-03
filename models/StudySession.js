@@ -12,6 +12,7 @@ const studySessionSchema = new mongoose.Schema({
   status: String, // "ongoing", "paused", or "completed"
   pausedDuration: Number,
   duration: Number,
+  record_time: Number,
 });
 
 const StudySession = mongoose.model("StudySession", studySessionSchema);
