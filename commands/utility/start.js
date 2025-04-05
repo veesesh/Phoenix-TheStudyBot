@@ -23,19 +23,37 @@ module.exports = {
         "⚠️ You already have an active study session! Use `/end` to finish it."
       );
     }
+    await StudySession.updateOne(
+      { userId },
+      {
+        $set: {
+          userId,
+          startTime: new Date(),
+          originalStartTime: new Date(),
+          pausedDuration: 0,
+          status: "ongoing",
+          record_time: new Date().getTime(),
+          totalDuration: 0,
+          endTime: null,
+        },
+      },
+      {
+        upsert: true,
+      }
+    );
 
     // new session
-    const newSession = new StudySession({
-      userId,
-      startTime: new Date(),
-      originalStartTime: new Date(),
-      pausedDuration: 0,
-      status: "ongoing",
-      record_time: new Date().getTime(),
-      totalDuration: 0,
-    });
+    //const newSession = new StudySession({
+    //  userId,
+    //  startTime: new Date(),
+    //  originalStartTime: new Date(),
+    //  pausedDuration: 0,
+    //  status: "ongoing",
+    //  record_time: new Date().getTime(),
+    //  totalDuration: 0,
+    //});
 
-    await newSession.save();
+    // await newSession.save();
     await interaction.reply(
       "✅ Study session started! Use `/end` when you're done."
     );
