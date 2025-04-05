@@ -12,7 +12,7 @@ module.exports = {
 
     const query = {
       userId,
-      status: "ongoing",
+      status: { $in: ["ongoing", "paused"] },
     };
     const options = {
       startTime: 1,
@@ -38,7 +38,7 @@ module.exports = {
         (session.pausedDuration || 0) + (now - session.startTime) / 1000;
     }
 
-    console.log((now - session.startTime) / 1000);
+    // console.log((now - session.startTime) / 1000);
     //console.log(session.pausedDuration);
 
     let totalDuration = (now - session.originalStartTime) / 1000;
@@ -49,16 +49,18 @@ module.exports = {
     session.totalDuration = totalDuration;
     session.status = "ended";
     (session.record_time = new Date().getTime()),
-      console.log({
+      /*
+    console.log({
         s: session.startTime,
         a: now,
         b: (now - session.startTime) / 1000,
         c: session.pausedDuration,
         d: totalDuration,
       });
-    // console.log(session.record_time);
+      */
+      // console.log(session.record_time);
 
-    await session.save();
+      await session.save();
 
     const hours = Math.floor(totalDuration / 3600);
     const minutes = Math.floor((totalDuration % 3600) / 60);
