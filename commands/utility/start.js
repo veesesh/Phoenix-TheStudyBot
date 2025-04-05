@@ -11,7 +11,7 @@ module.exports = {
     // Check active session
     const query = {
       userId,
-      status: "ongoing",
+      status: { $in: ["ongoing", "paused"] },
     };
     const options = {
       sort: { record_time: -1 },
