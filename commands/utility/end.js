@@ -1,73 +1,46 @@
 const { SlashCommandBuilder } = require("discord.js");
 const StudySession = require("../../models/StudySession.js");
+const dayjs = require("dayjs");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("end")
-    .setDescription("Ends and logs the session"),
+    .setDescription("End and log your study session"),
   async execute(interaction) {
     const userId = interaction.user.id;
-
-    const now = new Date();
-
-    const query = {
+    const session = await StudySession.findOne({
       userId,
       status: { $in: ["ongoing", "paused"] },
-    };
-    const options = {
-      startTime: 1,
-      endTime: 1,
-      originalStartTime: 1,
-      pausedDuration: 1,
-      totalDuration: 1,
-      sort: { record_time: -1 },
-      // projection: { startTime: 1 },
-    };
+    });
 
-    const session = await StudySession.findOne(query, options);
-
-    //console.log(session);
     if (!session) {
-      return await interaction.reply(
-        "❌ You don’t have an active study session."
-      );
+      return interaction.reply("❌ No active session found.");
     }
 
-    if (session.startTime && session.status === "paused") {
-      session.pausedDuration =
-        (session.pausedDuration || 0) + (now - session.startTime) / 1000;
-    }
-
-    // console.log((now - session.startTime) / 1000);
-    //console.log(session.pausedDuration);
-
+    const now = new Date();
     let totalDuration = (now - session.originalStartTime) / 1000;
-    totalDuration -= session.pausedDuration || 0;
-    // console.log(totalDuration);
+    if (session.status === "paused" && session.startTime) {
+      session.pausedDuration += (now - session.startTime) / 1000;
+    }
 
+    totalDuration -= session.pausedDuration || 0;
     session.endTime = now;
     session.totalDuration = totalDuration;
     session.status = "ended";
-    (session.record_time = new Date().getTime()),
-      /*
-    console.log({
-        s: session.startTime,
-        a: now,
-        b: (now - session.startTime) / 1000,
-        c: session.pausedDuration,
-        d: totalDuration,
-      });
-      */
-      // console.log(session.record_time);
+    session.record_time = Date.now();
 
-      await session.save();
+    const dateKey = dayjs().format("YYYY-MM-DD");
+    const currentLog = session.log.get(dateKey) || 0;
+    session.log.set(dateKey, currentLog + totalDuration);
 
-    const hours = Math.floor(totalDuration / 3600);
-    const minutes = Math.floor((totalDuration % 3600) / 60);
-    const seconds = Math.floor(totalDuration % 60);
+    await session.save();
+
+    const h = Math.floor(totalDuration / 3600);
+    const m = Math.floor((totalDuration % 3600) / 60);
+    const s = Math.floor(totalDuration % 60);
 
     await interaction.reply(
-      `⏹️ Study session ended! Total time: **${hours}h ${minutes}m ${seconds}s**`
+      `⏹️ Session ended! Total time: **${h}h ${m}m ${s}s**`
     );
   },
 };
