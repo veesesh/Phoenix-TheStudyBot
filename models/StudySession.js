@@ -13,6 +13,11 @@ const studySessionSchema = new mongoose.Schema({
   pausedDuration: Number, // default to 0
   duration: Number,
   record_time: Number,
+  log: {
+    type: Map,
+    of: Number, // date string ("2025-04-17") -> duration in seconds
+    default: {},
+  },
 });
 
 const StudySession = mongoose.model("StudySession", studySessionSchema);
