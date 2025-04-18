@@ -12,7 +12,7 @@ function getColor(seconds) {
 }
 
 module.exports = function renderHeatmap(log) {
-  const width = 800;
+  const width = 400;
   const height = 150;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
