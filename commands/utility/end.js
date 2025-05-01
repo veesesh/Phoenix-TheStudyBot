@@ -33,7 +33,7 @@ module.exports = {
     });
     console.log(now - session.startTime);
     // session.totalDuration = session.totalDuration + (now - session.startTime);
-    seconds += session.startTime ? now - session.startTime : 0;
+    seconds += session.startTime ? (now - session.startTime) / 1000 : 0;
     session.record_time = now;
     console.log(session);
     console.log(seconds);

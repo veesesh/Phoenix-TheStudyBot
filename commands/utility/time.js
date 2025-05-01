@@ -16,24 +16,12 @@ module.exports = {
     }
 
     const now = new Date();
-    const totalTime = (now - session.startTime) / 1000; // fine until there is no pause
+    const totalTime = (now - session.startTime) / 1000;
+    session.totalDuration = +totalTime;
 
-    console.log({
-      now: now,
-      x: session.startTime,
-      totalTime: totalTime,
-      v: session,
-    });
-
-    /* if (session.pausedDuration) {
-      totalTime = totalTime - session.pausedDuration;
-    }
-     if (session.status === "paused" && session.startTime) {
-      totalTime -= (now - session.startTime) / 1000;
-    } */
-    const h = Math.floor(totalTime / 3600);
-    const m = Math.floor((totalTime % 3600) / 60);
-    const s = Math.floor(totalTime % 60);
+    const h = Math.floor(session.totalDuration / 3600);
+    const m = Math.floor((session.totalDuration % 3600) / 60);
+    const s = Math.floor(session.totalDuration % 60);
     await interaction.reply(`Time studied so far: **${h}h ${m}m ${s}s*`);
   },
 };
