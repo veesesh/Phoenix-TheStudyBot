@@ -20,33 +20,35 @@ module.exports = {
     }
 
     const now = new Date();
-    let totalDuration = (now - session.originalStartTime) / 1000;
-
-    if (session.status === "paused" && session.startTime) {
-      session.pausedDuration += (now - session.startTime) / 1000;
-    }
-
-    totalDuration -= session.pausedDuration || 0;
+    let seconds = session.totalDuration;
 
     const dateKey = dayjs().format("YYYY-MM-DD");
-
-    // Update the existing session as ended
+    console.log(session);
     session.status = "ended";
+    // session.startTime = new Date();
     session.endTime = now;
-    session.totalDuration = totalDuration;
+    console.log({
+      x: now,
+      y: session.startTime,
+    });
+    console.log(now - session.startTime);
+    // session.totalDuration = session.totalDuration + (now - session.startTime);
+    seconds += session.startTime ? now - session.startTime : 0;
     session.record_time = now;
+    console.log(session);
+    console.log(seconds);
 
     await session.save();
 
     // Increment the user's log
     await StudySession.updateOne(
       { userId },
-      { $inc: { [`log.${dateKey}`]: totalDuration } }
+      { $inc: { [`log.${dateKey}`]: seconds } }
     );
 
-    const h = Math.floor(totalDuration / 3600);
-    const m = Math.floor((totalDuration % 3600) / 60);
-    const s = Math.floor(totalDuration % 60);
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
 
     await interaction.reply(
       `⏹️ Session ended! Total time: **${h}h ${m}m ${s}s**`

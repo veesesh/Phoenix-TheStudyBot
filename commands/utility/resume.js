@@ -23,6 +23,9 @@ module.exports = {
 
     session.startTime = new Date();
     session.status = "ongoing";
+    //session.originalStartTime = session.originalStartTime;
+    //session.totalDuration = session.totalDuration;
+    session.end = null;
 
     await session.save();
 

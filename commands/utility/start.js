@@ -28,13 +28,13 @@ module.exports = {
       {
         $set: {
           userId,
-          startTime: new Date(),
-          originalStartTime: new Date(),
-          pausedDuration: 0,
           status: "ongoing",
-          record_time: new Date().getTime(),
+          originalStartTime: new Date(),
+          startTime: new Date(),
           totalDuration: 0,
           endTime: null,
+          // pausedDuration: 0,
+          record_time: new Date().getTime(),
         },
       },
       {
