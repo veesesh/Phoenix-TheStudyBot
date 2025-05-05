@@ -13,6 +13,14 @@ const studySessionSchema = new mongoose.Schema({
   pausedDuration: Number, // default to 0
   duration: Number,
   record_time: Number,
+  XP: {
+    type: Number,
+    default: 0,
+  },
+  Level: {
+    type: Number,
+    default: 0,
+  },
   log: {
     type: Map,
     of: Number, // date string ("2025-04-17") -> duration in seconds

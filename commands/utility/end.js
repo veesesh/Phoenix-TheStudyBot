@@ -23,20 +23,28 @@ module.exports = {
     let seconds = session.totalDuration;
 
     const dateKey = dayjs().format("YYYY-MM-DD");
-    console.log(session);
+    //console.log(session);
     session.status = "ended";
     // session.startTime = new Date();
-    session.endTime = now;
+    /* session.endTime = now;
     console.log({
       x: now,
       y: session.startTime,
     });
-    console.log(now - session.startTime);
+    console.log(now - session.startTime); */
     // session.totalDuration = session.totalDuration + (now - session.startTime);
     seconds += session.startTime ? (now - session.startTime) / 1000 : 0;
     session.record_time = now;
-    console.log(session);
-    console.log(seconds);
+    //console.log(session);
+    //console.log(seconds);
+
+    // XP and Levels
+    let xpThisSession = Math.floor(seconds / 60);
+    console.log(xpThisSession);
+    session.XP = (session.XP || 0) + xpThisSession;
+    console.log(session.XP);
+    session.Level = Math.floor(0.1 * Math.sqrt(session.XP));
+    console.log(session.Level);
 
     await session.save();
 
