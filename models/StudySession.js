@@ -5,6 +5,7 @@ mongoose.connect(MONGO_URI);
 
 const studySessionSchema = new mongoose.Schema({
   userId: String, // Discord User ID
+  userName: String,
   startTime: Date,
   originalStartTime: Date,
   endTime: Date, // (null if ongoing)

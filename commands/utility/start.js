@@ -7,10 +7,12 @@ module.exports = {
     .setDescription("Start a new study session"),
   async execute(interaction) {
     const userId = interaction.user.id;
+    const userName = interaction.user.username;
 
     // Check active session
     const query = {
       userId,
+      userName,
       status: { $in: ["ongoing", "paused"] },
     };
     const options = {
@@ -28,6 +30,7 @@ module.exports = {
       {
         $set: {
           userId,
+          userName,
           status: "ongoing",
           originalStartTime: new Date(),
           startTime: new Date(),
@@ -52,7 +55,7 @@ module.exports = {
     //  record_time: new Date().getTime(),
     //  totalDuration: 0,
     //});
-
+    console.log(userName);
     // await newSession.save();
     await interaction.reply(
       "✅ Study session started! Use `/end` when you're done."
